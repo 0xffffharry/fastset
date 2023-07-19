@@ -3,10 +3,12 @@ package domainset
 import (
 	"fmt"
 	"strings"
+	"sync"
 )
 
 type DomainSet struct {
-	m map[string]DomainSetRule
+	m     map[string]DomainSetRule
+	cache sync.Map
 }
 
 type DomainSetRule map[string]DomainSetRuleItem

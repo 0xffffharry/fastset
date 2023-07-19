@@ -33,6 +33,16 @@ func (d *DomainSet) Match(domain string, tags ...string) bool {
 	if tags == nil {
 		return false
 	}
+	tagAny, exist := d.cache.Load(domain)
+	if exist {
+		tag := tagAny.(string)
+		for _, _tag := range tags {
+			if _tag == tag {
+				return true
+			}
+		}
+		return false
+	}
 	for _, tag := range tags {
 		rules, exist := d.m[tag]
 		if !exist {
@@ -40,6 +50,7 @@ func (d *DomainSet) Match(domain string, tags ...string) bool {
 		}
 		for _, rule := range rules {
 			if rule.Match(domain) {
+				d.cache.Store(domain, tag)
 				return true
 			}
 		}
